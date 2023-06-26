@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
+
 public class Alarm : MonoBehaviour
 {
     [SerializeField] private float _volumeUpStep = 0.05f;
@@ -19,30 +20,24 @@ public class Alarm : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    private void OnTriggerEnter(Collider collision)
+    public void AlarmOn()
     {
-        if (collision.TryGetComponent<Player>(out Player player))
-        {
-            if (_volumeDownJob != null)
-                StopCoroutine(_volumeDownJob);
+        if (_volumeDownJob != null)
+            StopCoroutine(_volumeDownJob);
 
-            _audioSource.Play();
-            _volumeUpJob = StartCoroutine(VolumeChange(_volumeUpStep, _maxVolume));
-        }
+        _audioSource.Play();
+        _volumeUpJob = StartCoroutine(VolumeChange(_volumeUpStep, _maxVolume));
     }
 
-    private void OnTriggerExit(Collider collision)
+    public void AlarmOff()
     {
-        if (collision.TryGetComponent<Player>(out Player player))
-        {
-            if (_volumeUpJob != null)
-                StopCoroutine(_volumeUpJob);
+        if (_volumeUpJob != null)
+            StopCoroutine(_volumeUpJob);
 
-            _volumeDownJob = StartCoroutine(VolumeChange(_volumeDownStep, _minVolume));
+        _volumeDownJob = StartCoroutine(VolumeChange(_volumeDownStep, _minVolume));
 
-            if (_audioSource.volume == 0)
-                _audioSource.Stop();
-        }
+        if (_audioSource.volume == 0)
+            _audioSource.Stop();
     }
 
     private IEnumerator VolumeChange(float step, float targetVolume)
